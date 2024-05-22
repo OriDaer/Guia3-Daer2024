@@ -1,18 +1,22 @@
-#falta hacer que Finalmente los nombres de los archivos alojados en el sistema deben comenzar con un número asociado al número de descargas realizadas hasta el momento.
 import pyperclip,requests
 url_pasado=''
-x=0
+# https://www.gutenberg.org/cache/epub/1112/pg1112.txt
 while True:
-    url_actual = pyperclip.paste()  # Obtener la URL del portapapeles
-    if url_actual != url_pasado:  # Verifica si la URL es diferente a la anterior
-        contenido = requests.get(url_actual)  # Obtener contenido HTML
-        if contenido.status_code == 200:  # Verifica si la solicitud fue exitosa
-            contenido = contenido.text.lower()  # Convertir a minúsculas
-            archivo = open('ej.txt', 'w')# Guardar contenido en archivo txt
-        for texto in contenido :
-            archivo.write(texto)#escribe en el archivo .txt
-            url_pasado = url_actual  # Actualizar la URL anterior
+    url_actual = pyperclip.paste()  #obtengo la url del portapapeles
+    if url_actual != url_pasado:  # verifico si la url es diferente a la anterior
+        if url_actual.startswith("http"):#verifico si url es valida
+            contenido = requests.get(url_actual)  # Obtener contenido HTML
+            if contenido.status_code == 200:  # Verifica si la solicitud fue exitosa
+                contenido = contenido.text.lower()  # obtener contenido HTML en forma de texto y convertir a minúsculas  
+                num_archivos = 0 
+                nombre_archivo = f"contenido_pa_{num_archivos + 1}.txt"# Nombre del archivo
+                for texto in contenido:
+                    archivo = open(nombre_archivo, 'w')# Guardar el contenido en un archivo de texto
+                    archivo.write(contenido)
+                    archivo.close()
+            else:
+                print('Error al obtener respuesta de la página.')
         else:
-            print('Error')
+            print('La URL en el portapapeles no es válida.')
     else:
-        print('URL actual es igual al anterior')
+        print('La URL actual es igual a la anterior.')
